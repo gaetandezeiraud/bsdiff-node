@@ -1,7 +1,7 @@
 {
   "name": "bsdiff-nodejs",
   "description": "An binary diff and patch library based on bsdiff algorithm for NodeJS (Windows, Mac, Linux).",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "index.js",
   "devDependencies": {
     "mocha": "^3.4.2"
@@ -19,5 +19,9 @@
   "author": "Dezeiraud <contact@dezeiraud.com>",
   "license": "MIT",
   "gypfile": true,
-  "dependencies": {}
+  "dependencies": {},
+  "bugs": {
+    "url": "https://github.com/Dezeiraud/bsdiff-nodejs/issues"
+  },
+  "homepage": "https://github.com/Dezeiraud/bsdiff-nodejs#readme"
 }
