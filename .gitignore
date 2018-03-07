@@ -1,0 +1,13 @@
+# Mac
+.DS_Store
+
+# node
+*.log
+node_modules
+
+# IDE
+.idea
+.vscode
+
+# project
+build
