@@ -45,12 +45,14 @@ __FBSDID("$FreeBSD: src/usr.bin/bsdiff/bspatch/bspatch.c,v 1.1 2005/08/06 01:59:
 	typedef signed int ssize_t;
 
 	#define OPEN_FLAGS O_RDONLY|O_BINARY|O_NOINHERIT
+	#define OPEN_FLAGS_CREATE O_CREAT|O_TRUNC|O_WRONLY|O_BINARY
 	#define FOPEN_READ_FLAGS "rb"
 #else
     #include <unistd.h>
     #include <err.h>
 
 	#define OPEN_FLAGS O_RDONLY
+	#define OPEN_FLAGS_CREATE O_CREAT|O_TRUNC|O_WRONLY
 	#define FOPEN_READ_FLAGS "r"
 #endif
 
@@ -250,7 +252,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	}
 
 	/* Write the new file */
-	if(((fd=open(newfile,O_CREAT|O_TRUNC|O_WRONLY|O_BINARY,0666))<0) ||
+	if(((fd=open(newfile,OPEN_FLAGS_CREATE,0666))<0) ||
 		(write(fd,new,newsize)!=newsize) || (close(fd)==-1)) {
 		sprintf((char*)error, "\"%s\" %s", newfile, strerror(errno));
 		return -1;
