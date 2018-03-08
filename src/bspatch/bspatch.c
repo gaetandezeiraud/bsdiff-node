@@ -43,9 +43,15 @@ __FBSDID("$FreeBSD: src/usr.bin/bsdiff/bspatch/bspatch.c,v 1.1 2005/08/06 01:59:
 
 	typedef unsigned char u_char;
 	typedef signed int ssize_t;
+
+	#define OPEN_FLAGS O_RDONLY|O_BINARY|O_NOINHERIT
+	#define FOPEN_READ_FLAGS "rb"
 #else
     #include <unistd.h>
     #include <err.h>
+
+	#define OPEN_FLAGS O_RDONLY
+	#define FOPEN_READ_FLAGS "r"
 #endif
 
 static off_t offtin(u_char *buf)
@@ -81,7 +87,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	off_t i;
 
 	/* Open patch file */
-	if ((f = fopen(patchfile, "rb")) == NULL) {
+	if ((f = fopen(patchfile, FOPEN_READ_FLAGS)) == NULL) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}
@@ -128,7 +134,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}		
-	if ((cpf = fopen(patchfile, "rb")) == NULL) {
+	if ((cpf = fopen(patchfile, FOPEN_READ_FLAGS)) == NULL) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
@@ -140,7 +146,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		sprintf((char*)error, "BZ2_bzReadOpen, bz2err = %d", cbz2err);
 		return -1;
 	}	
-	if ((dpf = fopen(patchfile, "rb")) == NULL) {
+	if ((dpf = fopen(patchfile, FOPEN_READ_FLAGS)) == NULL) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
@@ -152,7 +158,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		sprintf((char*)error, "BZ2_bzReadOpen, bz2err = %d", cbz2err);
 		return -1;
 	}	
-	if ((epf = fopen(patchfile, "rb")) == NULL) {
+	if ((epf = fopen(patchfile, FOPEN_READ_FLAGS)) == NULL) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}		
@@ -165,7 +171,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		return -1;
 	}
 
-	if(((fd=open(oldfile,O_RDONLY|O_BINARY|O_NOINHERIT,0))<0) ||
+	if(((fd=open(oldfile,OPEN_FLAGS,0))<0) ||
 		((oldsize=lseek(fd,0,SEEK_END))==-1) ||
 		((old=malloc(oldsize+1))==NULL) ||
 		(lseek(fd,0,SEEK_SET)!=0) ||

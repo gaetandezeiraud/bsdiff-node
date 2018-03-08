@@ -40,9 +40,15 @@ __FBSDID("$FreeBSD: src/usr.bin/bsdiff/bsdiff/bsdiff.c,v 1.1 2005/08/06 01:59:05
 #ifdef _WIN32
     #include <io.h>
 	#include "../err.h"
+
+	#define OPEN_FLAGS O_RDONLY|O_BINARY|O_NOINHERIT
+	#define FOPEN_FLAGS "wb"
 #else
     #include <unistd.h>
     #include <err.h>
+
+	#define OPEN_FLAGS O_RDONLY
+	#define FOPEN_FLAGS "w"
 #endif
 
 #define MIN(x,y) (((x)<(y)) ? (x) : (y))
@@ -221,7 +227,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 
 	/* Allocate oldsize+1 bytes instead of oldsize bytes to ensure
 		that we never try to malloc(0) and get a NULL pointer */
-	if(((fd=open(oldfile,O_RDONLY|O_BINARY|O_NOINHERIT,0))<0) ||
+	if(((fd=open(oldfile,OPEN_FLAGS,0))<0) ||
 		((oldsize=lseek(fd,0,SEEK_END))==-1) ||
 		((old=malloc(oldsize+1))==NULL) ||
 		(lseek(fd,0,SEEK_SET)!=0) ||
@@ -243,7 +249,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 	
 	/* Allocate newsize+1 bytes instead of newsize bytes to ensure
 		that we never try to malloc(0) and get a NULL pointer */
-	if(((fd=open(newfile,O_RDONLY|O_BINARY|O_NOINHERIT,0))<0) ||
+	if(((fd=open(newfile,OPEN_FLAGS,0))<0) ||
 		((newsize=lseek(fd,0,SEEK_END))==-1) ||
 		((new=malloc(newsize+1))==NULL) ||
 		(lseek(fd,0,SEEK_SET)!=0) ||
@@ -259,7 +265,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 	eblen=0;
 		
 	/* Create the patch file */
-	if ((pf = fopen(patchfile, "wb")) == NULL) {
+	if ((pf = fopen(patchfile, FOPEN_FLAGS)) == NULL) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
