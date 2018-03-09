@@ -11,7 +11,15 @@ npm install --save bsdiff-nodejs
 
 ## USAGE
 
+Use as a command-line tool:
 ```bash
+bsdiff-nodejs diff oldfile newfile patchfile
+bsdiff-nodejs patch oldfile newfile patchfile
+```
+
+or as a lib:
+
+```javascript
 const bsdiff = require('bsdiff-nodejs');
 
 bsdiff.diff(oldfile, newfile, patchfile);
