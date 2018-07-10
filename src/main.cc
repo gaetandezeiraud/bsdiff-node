@@ -12,6 +12,38 @@ extern "C" {
 namespace bsdpNode {
   using namespace v8;
 
+  #include <sys/time.h>
+
+  void  callback(off_t current, off_t total)
+  {
+    static struct timeval start;
+    static bool           started = false;
+    struct timeval        now;
+    size_t                diff;
+    double                speed;
+
+    if (started)
+    {
+      gettimeofday(&now, NULL);
+      diff = (now.tv_sec - start.tv_sec) * 1000 +
+      (now.tv_usec - start.tv_usec) / 1000;
+      if (diff)
+      {
+        speed = current / diff;
+        if (speed)
+        {
+          printf("%lf milli seconds remaining\n", (total - current) / speed);
+        }
+      }
+    }
+    else
+    {
+      started = true;
+      gettimeofday(&start, NULL);
+    }
+    // printf("%ld/%ld\n", current, total);
+  }
+
   void diff(const FunctionCallbackInfo<Value>& args) {
     Isolate* isolate = args.GetIsolate();
     HandleScope scope(isolate);
@@ -28,7 +60,7 @@ namespace bsdpNode {
 
 
     char error[1024];
-    int ret = bsdiff(error, *oldfile, *newfile, *patchfile);   
+    int ret = bsdiff(error, *oldfile, *newfile, *patchfile, &callback);   
     if(ret != 0) {
       isolate->ThrowException(Exception::Error(
                         String::NewFromUtf8(isolate, error)));
@@ -50,7 +82,7 @@ namespace bsdpNode {
     String::Utf8Value patchfile(args[2]);
 
     char error[1024];
-    int ret = bspatch(error, *oldfile, *newfile, *patchfile);   
+    int ret = bspatch(error, *oldfile, *newfile, *patchfile, &callback);   
     if(ret != 0) {
       isolate->ThrowException(Exception::Error(
                         String::NewFromUtf8(isolate, error)));

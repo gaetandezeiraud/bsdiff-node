@@ -37,19 +37,7 @@ __FBSDID("$FreeBSD: src/usr.bin/bsdiff/bsdiff/bsdiff.c,v 1.1 2005/08/06 01:59:05
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef _WIN32
-    #include <io.h>
-	#include "../err.h"
-
-	#define OPEN_FLAGS O_RDONLY|O_BINARY|O_NOINHERIT
-	#define FOPEN_FLAGS "wb"
-#else
-    #include <unistd.h>
-    #include <err.h>
-
-	#define OPEN_FLAGS O_RDONLY
-	#define FOPEN_FLAGS "w"
-#endif
+#include "../shared.h"
 
 #define MIN(x,y) (((x)<(y)) ? (x) : (y))
 
@@ -64,24 +52,24 @@ static void split(off_t *I,off_t *V,off_t start,off_t len,off_t h)
 				if(V[I[k+i]+h]<x) {
 					x=V[I[k+i]+h];
 					j=0;
-				};
+				}
 				if(V[I[k+i]+h]==x) {
 					tmp=I[k+j];I[k+j]=I[k+i];I[k+i]=tmp;
 					j++;
-				};
-			};
+				}
+			}
 			for(i=0;i<j;i++) V[I[k+i]]=k+j-1;
 			if(j==1) I[k]=-1;
-		};
+		}
 		return;
-	};
+	}
 
 	x=V[I[start+len/2]+h];
 	jj=0;kk=0;
 	for(i=start;i<start+len;i++) {
 		if(V[I[i]+h]<x) jj++;
 		if(V[I[i]+h]==x) kk++;
-	};
+	}
 	jj+=start;kk+=jj;
 
 	i=start;j=0;k=0;
@@ -94,8 +82,8 @@ static void split(off_t *I,off_t *V,off_t start,off_t len,off_t h)
 		} else {
 			tmp=I[i];I[i]=I[kk+k];I[kk+k]=tmp;
 			k++;
-		};
-	};
+		}
+	}
 
 	while(jj+j<kk) {
 		if(V[I[jj+j]+h]==x) {
@@ -103,8 +91,8 @@ static void split(off_t *I,off_t *V,off_t start,off_t len,off_t h)
 		} else {
 			tmp=I[jj+j];I[jj+j]=I[kk+k];I[kk+k]=tmp;
 			k++;
-		};
-	};
+		}
+	}
 
 	if(jj>start) split(I,V,start,jj-start,h);
 
@@ -144,10 +132,10 @@ static void qsufsort(off_t *I,off_t *V,u_char *old,off_t oldsize)
 				split(I,V,i,len,h);
 				i+=len;
 				len=0;
-			};
-		};
+			}
+		}
 		if(len) I[i-len]=-len;
-	};
+	}
 
 	for(i=0;i<oldsize+1;i++) I[V[i]]=i;
 }
@@ -178,14 +166,14 @@ static off_t search(off_t *I,u_char *old,off_t oldsize,
 			*pos=I[en];
 			return y;
 		}
-	};
+	}
 
 	x=st+(en-st)/2;
 	if(memcmp(old+I[x],new,MIN(oldsize-I[x],newsize))<0) {
 		return search(I,old,oldsize,new,newsize,x,en,pos);
 	} else {
 		return search(I,old,oldsize,new,newsize,st,x,pos);
-	};
+	}
 }
 
 static void offtout(off_t x,u_char *buf)
@@ -194,19 +182,19 @@ static void offtout(off_t x,u_char *buf)
 
 	if(x<0) y=-x; else y=x;
 
-		buf[0]=y%256;y-=buf[0];
-	y=y/256;buf[1]=y%256;y-=buf[1];
-	y=y/256;buf[2]=y%256;y-=buf[2];
-	y=y/256;buf[3]=y%256;y-=buf[3];
-	y=y/256;buf[4]=y%256;y-=buf[4];
-	y=y/256;buf[5]=y%256;y-=buf[5];
-	y=y/256;buf[6]=y%256;y-=buf[6];
-	y=y/256;buf[7]=y%256;
+		buf[0]=y&0xff;y-=buf[0];
+	y=y>>8;buf[1]=y&0xff;y-=buf[1];
+	y=y>>8;buf[2]=y&0xff;y-=buf[2];
+	y=y>>8;buf[3]=y&0xff;y-=buf[3];
+	y=y>>8;buf[4]=y&0xff;y-=buf[4];
+	y=y>>8;buf[5]=y&0xff;y-=buf[5];
+	y=y>>8;buf[6]=y&0xff;y-=buf[6];
+	y=y>>8;buf[7]=y&0xff;
 
 	if(x<0) buf[7]|=0x80;
 }
 
-int bsdiff(const char* error, const char* oldfile, const char* newfile, const char* patchfile) {
+int bsdiff(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void (*callback)(off_t, off_t)) {
 	int fd;
 	u_char *old,*new;
 	off_t oldsize,newsize;
@@ -219,8 +207,8 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 	off_t i;
 	off_t dblen,eblen;
 	u_char *db,*eb;
-	u_char buf[8];
-	u_char header[32];
+	u_char buf[24];
+	t_header header;
 	FILE * pf;
 	BZFILE * pfbz2;
 	int bz2err;
@@ -241,7 +229,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		((V=malloc((oldsize+1)*sizeof(off_t)))==NULL)) {
 		sprintf((char*)error, "%s", strerror(errno));
 		return -1;
-	};
+	}
 	
 	qsufsort(I,V,old,oldsize);
 
@@ -265,7 +253,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 	eblen=0;
 		
 	/* Create the patch file */
-	if ((pf = fopen(patchfile, FOPEN_FLAGS)) == NULL) {
+	if ((pf = fopen(patchfile, FOPEN_WRITE_FLAGS)) == NULL) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
@@ -280,11 +268,11 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		32	??	Bzip2ed ctrl block
 		??	??	Bzip2ed diff block
 		??	??	Bzip2ed extra block */
-	memcpy(header,"BSDIFF40",8);
-	offtout(0, header + 8);
-	offtout(0, header + 16);
-	offtout(newsize, header + 24);
-	if (fwrite(header, 32, 1, pf) != 1) {
+	memcpy(header.magic,"BSDIFF40",8);
+	offtout(0, &header.bzctrllen);
+	offtout(0, &header.bzdatalen);
+	offtout(newsize, &header.newsize);
+	if (fwrite(&header, 32, 1, pf) != 1) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}		
@@ -298,6 +286,8 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 	scan=0;len=0;
 	lastscan=0;lastpos=0;lastoffset=0;
 	while(scan<newsize) {
+		if (callback)
+			callback(scan, newsize);
 		oldscore=0;
 
 		for(scsc=scan+=len;scan<newsize;scan++) {
@@ -315,24 +305,24 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 			if((scan+lastoffset<oldsize) &&
 				(old[scan+lastoffset] == new[scan]))
 				oldscore--;
-		};
+		}
 
 		if((len!=oldscore) || (scan==newsize)) {
 			s=0;Sf=0;lenf=0;
 			for(i=0;(lastscan+i<scan)&&(lastpos+i<oldsize);) {
 				if(old[lastpos+i]==new[lastscan+i]) s++;
 				i++;
-				if(s*2-i>Sf*2-lenf) { Sf=s; lenf=i; };
-			};
+				if(s*2-i>Sf*2-lenf) { Sf=s; lenf=i; }
+			}
 
 			lenb=0;
 			if(scan<newsize) {
 				s=0;Sb=0;
 				for(i=1;(scan>=lastscan+i)&&(pos>=i);i++) {
 					if(old[pos-i]==new[scan-i]) s++;
-					if(s*2-i>Sb*2-lenb) { Sb=s; lenb=i; };
-				};
-			};
+					if(s*2-i>Sb*2-lenb) { Sb=s; lenb=i; }
+				}
+			}
 
 			if(lastscan+lenf>scan-lenb) {
 				overlap=(lastscan+lenf)-(scan-lenb);
@@ -342,47 +332,35 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 					   old[lastpos+lenf-overlap+i]) s++;
 					if(new[scan-lenb+i]==
 					   old[pos-lenb+i]) s--;
-					if(s>Ss) { Ss=s; lens=i+1; };
-				};
+					if(s>Ss) { Ss=s; lens=i+1; }
+				}
 
 				lenf+=lens-overlap;
 				lenb-=lens;
-			};
+			}
 
 			for(i=0;i<lenf;i++)
 				db[dblen+i]=new[lastscan+i]-old[lastpos+i];
-			for(i=0;i<(scan-lenb)-(lastscan+lenf);i++)
-				eb[eblen+i]=new[lastscan+lenf+i];
+			if ((scan-lenb)-(lastscan+lenf) > 0)
+				memcpy(&eb[eblen], &new[lastscan+lenf], (scan-lenb)-(lastscan+lenf));
 
 			dblen+=lenf;
 			eblen+=(scan-lenb)-(lastscan+lenf);
 
-			offtout(lenf,buf);
-			BZ2_bzWrite(&bz2err, pfbz2, buf, 8);
-			if (bz2err != BZ_OK) {
-				sprintf((char*)error, "BZ2_bzWrite, bz2err = %d", bz2err);
-				return -1;
-			}			
-
-			offtout((scan-lenb)-(lastscan+lenf),buf);
-			BZ2_bzWrite(&bz2err, pfbz2, buf, 8);
+			offtout(lenf,&buf[0]);
+			offtout((scan-lenb)-(lastscan+lenf),&buf[8]);
+			offtout((pos-lenb)-(lastpos+lenf),&buf[16]);
+			BZ2_bzWrite(&bz2err, pfbz2, buf, 24);
 			if (bz2err != BZ_OK) {
 				sprintf((char*)error, "BZ2_bzWrite, bz2err = %d", bz2err);
 				return -1;
 			}
 
-			offtout((pos-lenb)-(lastpos+lenf),buf);
-			BZ2_bzWrite(&bz2err, pfbz2, buf, 8);
-			if (bz2err != BZ_OK) {
-				sprintf((char*)error, "BZ2_bzWrite, bz2err = %d", bz2err);
-				return -1;
-			}				
-
 			lastscan=scan-lenb;
 			lastpos=pos-lenb;
 			lastoffset=pos-scan;
-		};
-	};
+		}
+	}
 	BZ2_bzWriteClose(&bz2err, pfbz2, 0, NULL, NULL);
 	if (bz2err != BZ_OK) {
 		sprintf((char*)error, "BZ2_bzWriteClose, bz2err = %d", bz2err);
@@ -394,7 +372,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		sprintf((char*)error, "\"ftell\" %s", strerror(errno));
 		return -1;
 	}		
-	offtout(len-32, header + 8);
+	offtout(len-32, &header.bzctrllen);
 
 	/* Write compressed diff data */
 	if ((pfbz2 = BZ2_bzWriteOpen(&bz2err, pf, 9, 0, 0)) == NULL) {
@@ -419,7 +397,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		sprintf((char*)error, "\"ftell\" %s", strerror(errno));
 		return -1;
 	}	
-	offtout(newsize - len, header + 16);
+	offtout(newsize - len, &header.bzdatalen);
 
 	/* Write compressed extra data */
 	if ((pfbz2 = BZ2_bzWriteOpen(&bz2err, pf, 9, 0, 0)) == NULL) {
@@ -444,7 +422,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		sprintf((char*)error, "\"fseek\" %s", strerror(errno));
 		return -1;
 	}	
-	if (fwrite(header, 32, 1, pf) != 1) {
+	if (fwrite(&header, 32, 1, pf) != 1) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
