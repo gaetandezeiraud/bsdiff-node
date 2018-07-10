@@ -37,19 +37,7 @@ __FBSDID("$FreeBSD: src/usr.bin/bsdiff/bsdiff/bsdiff.c,v 1.1 2005/08/06 01:59:05
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef _WIN32
-    #include <io.h>
-	#include "../err.h"
-
-	#define OPEN_FLAGS O_RDONLY|O_BINARY|O_NOINHERIT
-	#define FOPEN_FLAGS "wb"
-#else
-    #include <unistd.h>
-    #include <err.h>
-
-	#define OPEN_FLAGS O_RDONLY
-	#define FOPEN_FLAGS "w"
-#endif
+#include "../shared.h"
 
 #define MIN(x,y) (((x)<(y)) ? (x) : (y))
 
@@ -194,14 +182,14 @@ static void offtout(off_t x,u_char *buf)
 
 	if(x<0) y=-x; else y=x;
 
-		buf[0]=y%256;y-=buf[0];
-	y=y/256;buf[1]=y%256;y-=buf[1];
-	y=y/256;buf[2]=y%256;y-=buf[2];
-	y=y/256;buf[3]=y%256;y-=buf[3];
-	y=y/256;buf[4]=y%256;y-=buf[4];
-	y=y/256;buf[5]=y%256;y-=buf[5];
-	y=y/256;buf[6]=y%256;y-=buf[6];
-	y=y/256;buf[7]=y%256;
+		buf[0]=y&0xff;y-=buf[0];
+	y=y>>8;buf[1]=y&0xff;y-=buf[1];
+	y=y>>8;buf[2]=y&0xff;y-=buf[2];
+	y=y>>8;buf[3]=y&0xff;y-=buf[3];
+	y=y>>8;buf[4]=y&0xff;y-=buf[4];
+	y=y>>8;buf[5]=y&0xff;y-=buf[5];
+	y=y>>8;buf[6]=y&0xff;y-=buf[6];
+	y=y>>8;buf[7]=y&0xff;
 
 	if(x<0) buf[7]|=0x80;
 }
@@ -220,7 +208,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 	off_t dblen,eblen;
 	u_char *db,*eb;
 	u_char buf[8];
-	u_char header[32];
+	t_header header;
 	FILE * pf;
 	BZFILE * pfbz2;
 	int bz2err;
@@ -265,7 +253,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 	eblen=0;
 		
 	/* Create the patch file */
-	if ((pf = fopen(patchfile, FOPEN_FLAGS)) == NULL) {
+	if ((pf = fopen(patchfile, FOPEN_WRITE_FLAGS)) == NULL) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
@@ -280,11 +268,11 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		32	??	Bzip2ed ctrl block
 		??	??	Bzip2ed diff block
 		??	??	Bzip2ed extra block */
-	memcpy(header,"BSDIFF40",8);
-	offtout(0, header + 8);
-	offtout(0, header + 16);
-	offtout(newsize, header + 24);
-	if (fwrite(header, 32, 1, pf) != 1) {
+	memcpy(header.magic,"BSDIFF40",8);
+	offtout(0, &header.bzctrllen);
+	offtout(0, &header.bzdatalen);
+	offtout(newsize, &header.newsize);
+	if (fwrite(&header, 32, 1, pf) != 1) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}		
@@ -394,7 +382,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		sprintf((char*)error, "\"ftell\" %s", strerror(errno));
 		return -1;
 	}		
-	offtout(len-32, header + 8);
+	offtout(len-32, &header.bzctrllen);
 
 	/* Write compressed diff data */
 	if ((pfbz2 = BZ2_bzWriteOpen(&bz2err, pf, 9, 0, 0)) == NULL) {
@@ -419,7 +407,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		sprintf((char*)error, "\"ftell\" %s", strerror(errno));
 		return -1;
 	}	
-	offtout(newsize - len, header + 16);
+	offtout(newsize - len, &header.bzdatalen);
 
 	/* Write compressed extra data */
 	if ((pfbz2 = BZ2_bzWriteOpen(&bz2err, pf, 9, 0, 0)) == NULL) {
@@ -444,7 +432,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		sprintf((char*)error, "\"fseek\" %s", strerror(errno));
 		return -1;
 	}	
-	if (fwrite(header, 32, 1, pf) != 1) {
+	if (fwrite(&header, 32, 1, pf) != 1) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	

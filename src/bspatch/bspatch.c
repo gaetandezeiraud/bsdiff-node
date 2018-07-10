@@ -37,37 +37,20 @@ __FBSDID("$FreeBSD: src/usr.bin/bsdiff/bspatch/bspatch.c,v 1.1 2005/08/06 01:59:
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef _WIN32
-    #include <io.h>
-	#include "../err.h"
-
-	typedef unsigned char u_char;
-	typedef signed int ssize_t;
-
-	#define OPEN_FLAGS O_RDONLY|O_BINARY|O_NOINHERIT
-	#define OPEN_FLAGS_CREATE O_CREAT|O_TRUNC|O_WRONLY|O_BINARY
-	#define FOPEN_READ_FLAGS "rb"
-#else
-    #include <unistd.h>
-    #include <err.h>
-
-	#define OPEN_FLAGS O_RDONLY
-	#define OPEN_FLAGS_CREATE O_CREAT|O_TRUNC|O_WRONLY
-	#define FOPEN_READ_FLAGS "r"
-#endif
+#include "../shared.h"
 
 static off_t offtin(u_char *buf)
 {
 	off_t y;
 
 	y=buf[7]&0x7F;
-	y=y*256;y+=buf[6];
-	y=y*256;y+=buf[5];
-	y=y*256;y+=buf[4];
-	y=y*256;y+=buf[3];
-	y=y*256;y+=buf[2];
-	y=y*256;y+=buf[1];
-	y=y*256;y+=buf[0];
+	y=y<<8;y+=buf[6];
+	y=y<<8;y+=buf[5];
+	y=y<<8;y+=buf[4];
+	y=y<<8;y+=buf[3];
+	y=y<<8;y+=buf[2];
+	y=y<<8;y+=buf[1];
+	y=y<<8;y+=buf[0];
 
 	if(buf[7]&0x80) y=-y;
 
@@ -79,9 +62,9 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	BZFILE * cpfbz2, * dpfbz2, * epfbz2;
 	int cbz2err, dbz2err, ebz2err;
 	int fd;
-	ssize_t oldsize,newsize;
-	ssize_t bzctrllen,bzdatalen;
-	u_char header[32],buf[8];
+	ssize_t oldsize;
+	t_header header;
+	u_char buf[8];
 	u_char *old, *new;
 	off_t oldpos,newpos;
 	off_t ctrl[3];
@@ -109,7 +92,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	*/
 
 	/* Read header */
-	if (fread(header, 1, 32, f) < 32) {
+	if (fread(&header, 1, 32, f) < 32) {
 		if (feof(f)) {
 			sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 			return -1;
@@ -117,16 +100,16 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	}
 
 	/* Check for appropriate magic */
-	if (memcmp(header, "BSDIFF40", 8) != 0) {
+	if (memcmp(header.magic, "BSDIFF40", 8) != 0) {
 		sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 		return -1;
 	}		
 
 	/* Read lengths from header */
-	bzctrllen=offtin(header+8);
-	bzdatalen=offtin(header+16);
-	newsize=offtin(header+24);
-	if((bzctrllen<0) || (bzdatalen<0) || (newsize<0)) {
+	header.bzctrllen=offtin(&header.bzctrllen);
+	header.bzdatalen=offtin(&header.bzdatalen);
+	header.newsize=offtin(&header.newsize);
+	if((header.bzctrllen<0) || (header.bzdatalen<0) || (header.newsize<0)) {
 		sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 		return -1;
 	}		
@@ -152,7 +135,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
-	if (fseek(dpf, 32 + bzctrllen, SEEK_SET)) {
+	if (fseek(dpf, 32 + header.bzctrllen, SEEK_SET)) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
@@ -164,7 +147,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}		
-	if (fseek(epf, 32 + bzctrllen + bzdatalen, SEEK_SET)) {
+	if (fseek(epf, 32 + header.bzctrllen + header.bzdatalen, SEEK_SET)) {
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
@@ -182,13 +165,13 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		sprintf((char*)error, "\"%s\" %s", oldfile, strerror(errno));
 		return -1;
 	}
-	if((new=malloc(newsize+1))==NULL) {
+	if((new=malloc(header.newsize+1))==NULL) {
 		sprintf((char*)error, "%s", strerror(errno));
 		return -1;
 	} 
 
 	oldpos=0;newpos=0;
-	while(newpos<newsize) {
+	while(newpos<header.newsize) {
 		/* Read control data */
 		for(i=0;i<=2;i++) {
 			lenread = BZ2_bzRead(&cbz2err, cpfbz2, buf, 8);
@@ -201,7 +184,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		};
 
 		/* Sanity-check */
-		if(newpos+ctrl[0]>newsize) {
+		if(newpos+ctrl[0]>header.newsize) {
 			sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 			return -1;
 		}			
@@ -224,7 +207,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		oldpos+=ctrl[0];
 
 		/* Sanity-check */
-		if(newpos+ctrl[1]>newsize) {
+		if(newpos+ctrl[1]>header.newsize) {
 			sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 			return -1;
 		}		
@@ -253,7 +236,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 
 	/* Write the new file */
 	if(((fd=open(newfile,OPEN_FLAGS_CREATE,0666))<0) ||
-		(write(fd,new,newsize)!=newsize) || (close(fd)==-1)) {
+		(write(fd,new,header.newsize)!=header.newsize) || (close(fd)==-1)) {
 		sprintf((char*)error, "\"%s\" %s", newfile, strerror(errno));
 		return -1;
 	}	
