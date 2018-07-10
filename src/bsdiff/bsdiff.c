@@ -52,24 +52,24 @@ static void split(off_t *I,off_t *V,off_t start,off_t len,off_t h)
 				if(V[I[k+i]+h]<x) {
 					x=V[I[k+i]+h];
 					j=0;
-				};
+				}
 				if(V[I[k+i]+h]==x) {
 					tmp=I[k+j];I[k+j]=I[k+i];I[k+i]=tmp;
 					j++;
-				};
-			};
+				}
+			}
 			for(i=0;i<j;i++) V[I[k+i]]=k+j-1;
 			if(j==1) I[k]=-1;
-		};
+		}
 		return;
-	};
+	}
 
 	x=V[I[start+len/2]+h];
 	jj=0;kk=0;
 	for(i=start;i<start+len;i++) {
 		if(V[I[i]+h]<x) jj++;
 		if(V[I[i]+h]==x) kk++;
-	};
+	}
 	jj+=start;kk+=jj;
 
 	i=start;j=0;k=0;
@@ -82,8 +82,8 @@ static void split(off_t *I,off_t *V,off_t start,off_t len,off_t h)
 		} else {
 			tmp=I[i];I[i]=I[kk+k];I[kk+k]=tmp;
 			k++;
-		};
-	};
+		}
+	}
 
 	while(jj+j<kk) {
 		if(V[I[jj+j]+h]==x) {
@@ -91,8 +91,8 @@ static void split(off_t *I,off_t *V,off_t start,off_t len,off_t h)
 		} else {
 			tmp=I[jj+j];I[jj+j]=I[kk+k];I[kk+k]=tmp;
 			k++;
-		};
-	};
+		}
+	}
 
 	if(jj>start) split(I,V,start,jj-start,h);
 
@@ -132,10 +132,10 @@ static void qsufsort(off_t *I,off_t *V,u_char *old,off_t oldsize)
 				split(I,V,i,len,h);
 				i+=len;
 				len=0;
-			};
-		};
+			}
+		}
 		if(len) I[i-len]=-len;
-	};
+	}
 
 	for(i=0;i<oldsize+1;i++) I[V[i]]=i;
 }
@@ -166,14 +166,14 @@ static off_t search(off_t *I,u_char *old,off_t oldsize,
 			*pos=I[en];
 			return y;
 		}
-	};
+	}
 
 	x=st+(en-st)/2;
 	if(memcmp(old+I[x],new,MIN(oldsize-I[x],newsize))<0) {
 		return search(I,old,oldsize,new,newsize,x,en,pos);
 	} else {
 		return search(I,old,oldsize,new,newsize,st,x,pos);
-	};
+	}
 }
 
 static void offtout(off_t x,u_char *buf)
@@ -194,7 +194,7 @@ static void offtout(off_t x,u_char *buf)
 	if(x<0) buf[7]|=0x80;
 }
 
-int bsdiff(const char* error, const char* oldfile, const char* newfile, const char* patchfile) {
+int bsdiff(const char* error, const char* oldfile, const char* newfile, const char* patchfile, const void (*callback)(size_t, size_t)) {
 	int fd;
 	u_char *old,*new;
 	off_t oldsize,newsize;
@@ -207,7 +207,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 	off_t i;
 	off_t dblen,eblen;
 	u_char *db,*eb;
-	u_char buf[8];
+	u_char buf[24];
 	t_header header;
 	FILE * pf;
 	BZFILE * pfbz2;
@@ -229,7 +229,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		((V=malloc((oldsize+1)*sizeof(off_t)))==NULL)) {
 		sprintf((char*)error, "%s", strerror(errno));
 		return -1;
-	};
+	}
 	
 	qsufsort(I,V,old,oldsize);
 
@@ -303,24 +303,24 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 			if((scan+lastoffset<oldsize) &&
 				(old[scan+lastoffset] == new[scan]))
 				oldscore--;
-		};
+		}
 
 		if((len!=oldscore) || (scan==newsize)) {
 			s=0;Sf=0;lenf=0;
 			for(i=0;(lastscan+i<scan)&&(lastpos+i<oldsize);) {
 				if(old[lastpos+i]==new[lastscan+i]) s++;
 				i++;
-				if(s*2-i>Sf*2-lenf) { Sf=s; lenf=i; };
-			};
+				if(s*2-i>Sf*2-lenf) { Sf=s; lenf=i; }
+			}
 
 			lenb=0;
 			if(scan<newsize) {
 				s=0;Sb=0;
 				for(i=1;(scan>=lastscan+i)&&(pos>=i);i++) {
 					if(old[pos-i]==new[scan-i]) s++;
-					if(s*2-i>Sb*2-lenb) { Sb=s; lenb=i; };
-				};
-			};
+					if(s*2-i>Sb*2-lenb) { Sb=s; lenb=i; }
+				}
+			}
 
 			if(lastscan+lenf>scan-lenb) {
 				overlap=(lastscan+lenf)-(scan-lenb);
@@ -330,12 +330,12 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 					   old[lastpos+lenf-overlap+i]) s++;
 					if(new[scan-lenb+i]==
 					   old[pos-lenb+i]) s--;
-					if(s>Ss) { Ss=s; lens=i+1; };
-				};
+					if(s>Ss) { Ss=s; lens=i+1; }
+				}
 
 				lenf+=lens-overlap;
 				lenb-=lens;
-			};
+			}
 
 			for(i=0;i<lenf;i++)
 				db[dblen+i]=new[lastscan+i]-old[lastpos+i];
@@ -345,32 +345,20 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 			dblen+=lenf;
 			eblen+=(scan-lenb)-(lastscan+lenf);
 
-			offtout(lenf,buf);
-			BZ2_bzWrite(&bz2err, pfbz2, buf, 8);
-			if (bz2err != BZ_OK) {
-				sprintf((char*)error, "BZ2_bzWrite, bz2err = %d", bz2err);
-				return -1;
-			}			
-
-			offtout((scan-lenb)-(lastscan+lenf),buf);
-			BZ2_bzWrite(&bz2err, pfbz2, buf, 8);
+			offtout(lenf,&buf[0]);
+			offtout((scan-lenb)-(lastscan+lenf),&buf[8]);
+			offtout((pos-lenb)-(lastpos+lenf),&buf[16]);
+			BZ2_bzWrite(&bz2err, pfbz2, buf, 24);
 			if (bz2err != BZ_OK) {
 				sprintf((char*)error, "BZ2_bzWrite, bz2err = %d", bz2err);
 				return -1;
 			}
 
-			offtout((pos-lenb)-(lastpos+lenf),buf);
-			BZ2_bzWrite(&bz2err, pfbz2, buf, 8);
-			if (bz2err != BZ_OK) {
-				sprintf((char*)error, "BZ2_bzWrite, bz2err = %d", bz2err);
-				return -1;
-			}				
-
 			lastscan=scan-lenb;
 			lastpos=pos-lenb;
 			lastoffset=pos-scan;
-		};
-	};
+		}
+	}
 	BZ2_bzWriteClose(&bz2err, pfbz2, 0, NULL, NULL);
 	if (bz2err != BZ_OK) {
 		sprintf((char*)error, "BZ2_bzWriteClose, bz2err = %d", bz2err);

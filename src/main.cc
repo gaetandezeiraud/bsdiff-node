@@ -28,7 +28,7 @@ namespace bsdpNode {
 
 
     char error[1024];
-    int ret = bsdiff(error, *oldfile, *newfile, *patchfile);   
+    int ret = bsdiff(error, *oldfile, *newfile, *patchfile, NULL);   
     if(ret != 0) {
       isolate->ThrowException(Exception::Error(
                         String::NewFromUtf8(isolate, error)));
@@ -50,7 +50,7 @@ namespace bsdpNode {
     String::Utf8Value patchfile(args[2]);
 
     char error[1024];
-    int ret = bspatch(error, *oldfile, *newfile, *patchfile);   
+    int ret = bspatch(error, *oldfile, *newfile, *patchfile, NULL);   
     if(ret != 0) {
       isolate->ThrowException(Exception::Error(
                         String::NewFromUtf8(isolate, error)));

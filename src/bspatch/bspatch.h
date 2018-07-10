@@ -29,6 +29,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-int bspatch(const char* error, const char* oldfile, const char* newfile, const char* patchfile);
+int bspatch(const char* error, const char* oldfile, const char* newfile, const char* patchfile, const void (*callback)(size_t, size_t));
 
 #endif 

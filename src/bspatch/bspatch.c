@@ -57,7 +57,7 @@ static off_t offtin(u_char *buf)
 	return y;
 }
 
-int bspatch(const char* error, const char* oldfile, const char* newfile, const char* patchfile) {
+int bspatch(const char* error, const char* oldfile, const char* newfile, const char* patchfile, const void (*callback)(size_t, size_t)) {
 	FILE * f, * cpf, * dpf, * epf;
 	BZFILE * cpfbz2, * dpfbz2, * epfbz2;
 	int cbz2err, dbz2err, ebz2err;
@@ -184,7 +184,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		};
 
 		/* Sanity-check */
-		if(newpos+ctrl[0]>header.newsize) {
+		if(newpos+ctrl[0]+ctrl[1]>header.newsize) {
 			sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 			return -1;
 		}			
@@ -199,7 +199,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 
 		/* Add old data to diff string */
 		for(i=0;i<ctrl[0];i++)
-			if((oldpos+i>=0) && (oldpos+i<oldsize))
+			if((oldpos+i<oldsize))
 				new[newpos+i]+=old[oldpos+i];
 
 		/* Adjust pointers */
