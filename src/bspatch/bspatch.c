@@ -57,7 +57,7 @@ static off_t offtin(u_char *buf)
 	return y;
 }
 
-int bspatch(const char* error, const char* oldfile, const char* newfile, const char* patchfile, const void (*callback)(size_t, size_t)) {
+int bspatch(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void (*callback)(off_t, off_t)) {
 	FILE * f, * cpf, * dpf, * epf;
 	BZFILE * cpfbz2, * dpfbz2, * epfbz2;
 	int cbz2err, dbz2err, ebz2err;
@@ -172,6 +172,8 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 
 	oldpos=0;newpos=0;
 	while(newpos<header.newsize) {
+		if (callback)
+			callback(newpos, header.newsize);
 		/* Read control data */
 		for(i=0;i<=2;i++) {
 			lenread = BZ2_bzRead(&cbz2err, cpfbz2, buf, 8);

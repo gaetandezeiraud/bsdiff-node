@@ -29,6 +29,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-int bsdiff(const char* error, const char* oldfile, const char* newfile, const char* patchfile, const void (*callback)(size_t, size_t));
+int bsdiff(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void (*callback)(off_t, off_t));
 
 #endif 
