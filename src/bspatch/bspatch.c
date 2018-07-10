@@ -184,7 +184,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		};
 
 		/* Sanity-check */
-		if(newpos+ctrl[0]+ctrl[1]>header.newsize) {
+		if(newpos+ctrl[0]>header.newsize) {
 			sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 			return -1;
 		}			
@@ -198,9 +198,8 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		}			
 
 		/* Add old data to diff string */
-		for(i=0;i<ctrl[0];i++)
-			if((oldpos+i<oldsize))
-				new[newpos+i]+=old[oldpos+i];
+		if (oldpos + ctrl[0] <= oldsize)
+			memcpy(&new[newpos], &old[oldpos], ctrl[0]);
 
 		/* Adjust pointers */
 		newpos+=ctrl[0];

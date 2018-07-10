@@ -339,8 +339,8 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 
 			for(i=0;i<lenf;i++)
 				db[dblen+i]=new[lastscan+i]-old[lastpos+i];
-			for(i=0;i<(scan-lenb)-(lastscan+lenf);i++)
-				eb[eblen+i]=new[lastscan+lenf+i];
+			if ((scan-lenb)-(lastscan+lenf) > 0)
+				memcpy(&eb[eblen], &new[lastscan+lenf], (scan-lenb)-(lastscan+lenf));
 
 			dblen+=lenf;
 			eblen+=(scan-lenb)-(lastscan+lenf);
