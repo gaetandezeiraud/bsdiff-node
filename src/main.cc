@@ -3,6 +3,7 @@
 
 #include <memory.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
 extern "C" {
   #include "bsdiff/bsdiff.h"
@@ -12,28 +13,21 @@ extern "C" {
 namespace bsdpNode {
   using namespace v8;
 
-  #include <sys/time.h>
-
-  void  callback(off_t current, off_t total)
+  void callback(off_t current, off_t total)
   {
     static struct timeval start;
     static bool           started = false;
     struct timeval        now;
     size_t                diff;
-    double                speed;
 
-    if (started)
+    if(started)
     {
       gettimeofday(&now, NULL);
       diff = (now.tv_sec - start.tv_sec) * 1000 +
       (now.tv_usec - start.tv_usec) / 1000;
       if (diff)
       {
-        speed = current / diff;
-        if (speed)
-        {
-          printf("%lf milli seconds remaining\n", (total - current) / speed);
-        }
+        printf("%i \n", static_cast<int>(current * 100 / total));
       }
     }
     else
@@ -48,7 +42,7 @@ namespace bsdpNode {
     Isolate* isolate = args.GetIsolate();
     HandleScope scope(isolate);
     
-    if (!args[0]->IsString() || !args[1]->IsString() || !args[2]->IsString()) {
+    if(!args[0]->IsString() || !args[1]->IsString() || !args[2]->IsString()) {
       isolate->ThrowException(Exception::Error(
                         String::NewFromUtf8(isolate, "Invalid arguments.")));
       return;
@@ -71,7 +65,7 @@ namespace bsdpNode {
     Isolate* isolate = args.GetIsolate();
     HandleScope scope(isolate);
 
-    if (!args[0]->IsString() || !args[1]->IsString() || !args[2]->IsString()) {
+    if(!args[0]->IsString() || !args[1]->IsString() || !args[2]->IsString()) {
       isolate->ThrowException(Exception::Error(
                         String::NewFromUtf8(isolate, "Invalid arguments.")));
       return;

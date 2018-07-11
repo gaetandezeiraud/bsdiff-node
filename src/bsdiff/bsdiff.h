@@ -26,9 +26,11 @@
 
 #ifndef BSDIFF_H
 #define BSDIFF_H
+
 #include <stddef.h>
 #include <stdint.h>
+#include <sys/types.h>
 
-int bsdiff(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void (*callback)(off_t, off_t));
+int bsdiff(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void (*callback)(off_t a, off_t b));
 
 #endif 
