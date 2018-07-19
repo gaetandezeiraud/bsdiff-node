@@ -4,7 +4,7 @@
   "bin": {
     "bsdiff ": "./bin/bsdiff-nodejs"
   },
-  "version": "1.0.6",
+  "version": "2.0.0",
   "main": "index.js",
   "devDependencies": {
     "mocha": "^5.2.0"
@@ -23,7 +23,7 @@
   "license": "MIT",
   "gypfile": true,
   "dependencies": {
-    "commander": "^2.15.1"
+    "nan": "^2.10.0"
   },
   "bugs": {
     "url": "https://github.com/Dezeiraud/bsdiff-nodejs/issues"

@@ -30,7 +30,6 @@ __FBSDID("$FreeBSD: src/usr.bin/bsdiff/bspatch/bspatch.c,v 1.1 2005/08/06 01:59:
 
 #include "bspatch.h"
 #include "bzlib.h"
-#include <sys/types.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -57,7 +56,8 @@ static off_t offtin(u_char *buf)
 	return y;
 }
 
-int bspatch(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void (*callback)(off_t, off_t)) {
+int bspatch(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void* progressWorker, void(*callback)(off_t, off_t, void*)) 
+{
 	FILE * f, * cpf, * dpf, * epf;
 	BZFILE * cpfbz2, * dpfbz2, * epfbz2;
 	int cbz2err, dbz2err, ebz2err;
@@ -173,7 +173,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	oldpos=0;newpos=0;
 	while(newpos<header.newsize) {
 		if (callback)
-			callback(newpos, header.newsize);
+			callback(newpos, header.newsize, progressWorker);
 		/* Read control data */
 		for(i=0;i<=2;i++) {
 			lenread = BZ2_bzRead(&cbz2err, cpfbz2, buf, 8);

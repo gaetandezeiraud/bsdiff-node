@@ -30,7 +30,6 @@ __FBSDID("$FreeBSD: src/usr.bin/bsdiff/bsdiff/bsdiff.c,v 1.1 2005/08/06 01:59:05
 
 #include "bsdiff.h"
 #include "bzlib.h"
-#include <sys/types.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -194,7 +193,8 @@ static void offtout(off_t x,u_char *buf)
 	if(x<0) buf[7]|=0x80;
 }
 
-int bsdiff(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void (*callback)(off_t, off_t)) {
+int bsdiff(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void* progressWorker, void(*callback)(off_t, off_t, void*)) 
+{
 	int fd;
 	u_char *old,*new;
 	off_t oldsize,newsize;
@@ -287,7 +287,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 	lastscan=0;lastpos=0;lastoffset=0;
 	while(scan<newsize) {
 		if (callback)
-			callback(scan, newsize);
+			callback(scan, newsize, progressWorker);
 		oldscore=0;
 
 		for(scsc=scan+=len;scan<newsize;scan++) {

@@ -26,9 +26,11 @@
 
 #ifndef BSPATCH_H
 #define BSPATCH_H
+
 #include <stddef.h>
 #include <stdint.h>
+#include <sys/types.h>
 
-int bspatch(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void (*callback)(off_t, off_t));
+int bspatch(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void* progressWorker, void(*callback)(off_t, off_t, void*));
 
 #endif 
