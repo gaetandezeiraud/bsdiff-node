@@ -15,7 +15,6 @@ public:
     DiffWorkerCallback(Nan::Callback *callback, const std::string& oldfile, const std::string& newfile, const std::string& patchfile);
     ~DiffWorkerCallback();
 
-    void GetPercentage();
     virtual void Execute(const ExecutionProgress& progress);
     virtual void HandleProgressCallback(const int* data, size_t count);
     virtual void HandleOKCallback();

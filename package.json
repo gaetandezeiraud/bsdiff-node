@@ -23,7 +23,6 @@
   "license": "MIT",
   "gypfile": true,
   "dependencies": {
-    "commander": "^2.15.1",
     "nan": "^2.10.0"
   },
   "bugs": {

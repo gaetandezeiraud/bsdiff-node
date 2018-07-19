@@ -5,6 +5,7 @@
       "sources": [
         "src/main.cc",
         "src/diffWorkerCallback.cc",
+        "src/patchWorkerCallback.cc",
         "src/bsdiff/bsdiff.c",
         "src/bspatch/bspatch.c",
         "src/bzip2/bzlib.c",

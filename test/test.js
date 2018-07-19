@@ -9,8 +9,18 @@ describe('bsdiff', () => {
       const patchFile = path.join(__dirname, 'resources/react.patch');
       const generatedFile = path.join(__dirname, 'resources/react-generated.zip');
 
-      //bsdiff.diff(oldFile, newFile, patchFile);
-      //bsdiff.patch(oldFile, generatedFile, patchFile); 
+      bsdiff.diff(oldFile, newFile, patchFile, function(result, err) {
+          if(err) return console.log('Error:', err);
+          console.log(result + "%");
+
+          if(result === 100) {
+            console.log("Patch");
+            bsdiff.patch(oldFile, generatedFile, patchFile, function(result, err) {
+                if(err) return console.log('Error:', err);
+                console.log(result + "%");
+            });
+          }
+      });
     });
   });
 });
