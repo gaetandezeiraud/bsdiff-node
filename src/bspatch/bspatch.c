@@ -200,8 +200,9 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		}			
 
 		/* Add old data to diff string */
-		if (oldpos + ctrl[0] <= oldsize)
-			memcpy(&new[newpos], &old[oldpos], ctrl[0]);
+		for(i=0;i<ctrl[0];i++)
+			if((oldpos+i>=0) && (oldpos+i<oldsize))
+				new[newpos+i]+=old[oldpos+i];
 
 		/* Adjust pointers */
 		newpos+=ctrl[0];
