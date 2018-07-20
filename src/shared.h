@@ -52,8 +52,8 @@ typedef struct	s_header
 {
 	char		magic[8];
 	size_t		bzctrllen;
-	ssize_t		bzdatalen;
-	ssize_t		newsize;
+	size_t		bzdatalen;
+	size_t		newsize;
 }				t_header;
 
 #endif
