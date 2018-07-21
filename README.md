@@ -44,8 +44,3 @@ bsdiff.diff(oldFile, newFile, patchFile, function(result, err) {
 
 ## License
 Copyright 2003-2005 Colin Percival
-
-Inspiration from:
-
-- https://github.com/tsyeyuanfeng/bsdp
-- https://github.com/GankLun/bsdiff-cross-platform

@@ -2,6 +2,7 @@
 .DS_Store
 
 # node
+package-lock.json
 *.log
 node_modules
 
