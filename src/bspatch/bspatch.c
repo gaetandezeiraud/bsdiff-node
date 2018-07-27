@@ -24,18 +24,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if 0
-__FBSDID("$FreeBSD: src/usr.bin/bsdiff/bspatch/bspatch.c,v 1.1 2005/08/06 01:59:06 cperciva Exp $");
-#endif
-
 #include "bspatch.h"
-#include "bzlib.h"
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "../shared.h"
 
 static off_t offtin(u_char *buf)
