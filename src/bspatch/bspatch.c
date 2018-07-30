@@ -40,7 +40,8 @@ static off_t offtin(u_char *buf)
 	y=y<<8;y+=buf[1];
 	y=y<<8;y+=buf[0];
 
-	if(buf[7]&0x80) y=-y;
+	if(buf[7]&0x80) 
+		y=-y;
 
 	return y;
 }
@@ -61,7 +62,8 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	off_t i;
 
 	/* Open patch file */
-	if ((f = fopen(patchfile, FOPEN_READ_FLAGS)) == NULL) {
+	if ((f = fopen(patchfile, FOPEN_READ_FLAGS)) == NULL) 
+	{
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}
@@ -81,15 +83,18 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	*/
 
 	/* Read header */
-	if (fread(&header, 1, 32, f) < 32) {
-		if (feof(f)) {
+	if (fread(&header, 1, 32, f) < 32) 
+	{
+		if (feof(f)) 
+		{
 			sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 			return -1;
 		}
 	}
 
 	/* Check for appropriate magic */
-	if (memcmp(header.magic, "BSDIFF40", 8) != 0) {
+	if (memcmp(header.magic, "BSDIFF40", 8) != 0) 
+	{
 		sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 		return -1;
 	}		
@@ -98,49 +103,60 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	header.bzctrllen=offtin(&header.bzctrllen);
 	header.bzdatalen=offtin(&header.bzdatalen);
 	header.newsize=offtin(&header.newsize);
-	if((header.bzctrllen<0) || (header.bzdatalen<0) || (header.newsize<0)) {
+	if((header.bzctrllen<0) || (header.bzdatalen<0) || (header.newsize<0)) 
+	{
 		sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 		return -1;
 	}		
 
 	/* Close patch file and re-open it via libbzip2 at the right places */
-	if (fclose(f)) {
+	if (fclose(f)) 
+	{
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}		
-	if ((cpf = fopen(patchfile, FOPEN_READ_FLAGS)) == NULL) {
+	if ((cpf = fopen(patchfile, FOPEN_READ_FLAGS)) == NULL) 
+	{
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
-	if (fseek(cpf, 32, SEEK_SET)) {
+	if (fseek(cpf, 32, SEEK_SET)) 
+	{
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}		
-	if ((cpfbz2 = BZ2_bzReadOpen(&cbz2err, cpf, 0, 0, NULL, 0)) == NULL) {
+	if ((cpfbz2 = BZ2_bzReadOpen(&cbz2err, cpf, 0, 0, NULL, 0)) == NULL) 
+	{
 		sprintf((char*)error, "BZ2_bzReadOpen, bz2err = %d", cbz2err);
 		return -1;
 	}	
-	if ((dpf = fopen(patchfile, FOPEN_READ_FLAGS)) == NULL) {
+	if ((dpf = fopen(patchfile, FOPEN_READ_FLAGS)) == NULL) 
+	{
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
-	if (fseek(dpf, 32 + header.bzctrllen, SEEK_SET)) {
+	if (fseek(dpf, 32 + header.bzctrllen, SEEK_SET)) 
+	{
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
-	if ((dpfbz2 = BZ2_bzReadOpen(&dbz2err, dpf, 0, 0, NULL, 0)) == NULL) {
+	if ((dpfbz2 = BZ2_bzReadOpen(&dbz2err, dpf, 0, 0, NULL, 0)) == NULL) 
+	{
 		sprintf((char*)error, "BZ2_bzReadOpen, bz2err = %d", cbz2err);
 		return -1;
 	}	
-	if ((epf = fopen(patchfile, FOPEN_READ_FLAGS)) == NULL) {
+	if ((epf = fopen(patchfile, FOPEN_READ_FLAGS)) == NULL) 
+	{
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}		
-	if (fseek(epf, 32 + header.bzctrllen + header.bzdatalen, SEEK_SET)) {
+	if (fseek(epf, 32 + header.bzctrllen + header.bzdatalen, SEEK_SET)) 
+	{
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}	
-	if ((epfbz2 = BZ2_bzReadOpen(&ebz2err, epf, 0, 0, NULL, 0)) == NULL) {
+	if ((epfbz2 = BZ2_bzReadOpen(&ebz2err, epf, 0, 0, NULL, 0)) == NULL) 
+	{
 		sprintf((char*)error, "BZ2_bzReadOpen, bz2err = %d", ebz2err);
 		return -1;
 	}
@@ -154,20 +170,23 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		sprintf((char*)error, "\"%s\" %s", oldfile, strerror(errno));
 		return -1;
 	}
-	if((new=malloc(header.newsize+1))==NULL) {
+	if((new=malloc(header.newsize+1))==NULL) 
+	{
 		sprintf((char*)error, "%s", strerror(errno));
 		return -1;
 	} 
 
 	oldpos=0;newpos=0;
-	while(newpos<header.newsize) {
+	while(newpos<header.newsize) 
+	{
 		if (callback)
 			callback(newpos, header.newsize, progressWorker);
 		/* Read control data */
-		for(i=0;i<=2;i++) {
+		for(i=0;i<=2;i++) 
+		{
 			lenread = BZ2_bzRead(&cbz2err, cpfbz2, buf, 8);
-			if ((lenread < 8) || ((cbz2err != BZ_OK) &&
-			    (cbz2err != BZ_STREAM_END))) {
+			if ((lenread < 8) || ((cbz2err != BZ_OK) && (cbz2err != BZ_STREAM_END))) 
+			{
 				sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 				return -1;
 			}			
@@ -175,15 +194,16 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		};
 
 		/* Sanity-check */
-		if(newpos+ctrl[0]>header.newsize) {
+		if(newpos+ctrl[0]>header.newsize) 
+		{
 			sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 			return -1;
 		}			
 
 		/* Read diff string */
 		lenread = BZ2_bzRead(&dbz2err, dpfbz2, new + newpos, ctrl[0]);
-		if ((lenread < ctrl[0]) ||
-		    ((dbz2err != BZ_OK) && (dbz2err != BZ_STREAM_END))) {
+		if ((lenread < ctrl[0]) || ((dbz2err != BZ_OK) && (dbz2err != BZ_STREAM_END))) 
+		{
 			sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 			return -1;
 		}			
@@ -198,15 +218,16 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		oldpos+=ctrl[0];
 
 		/* Sanity-check */
-		if(newpos+ctrl[1]>header.newsize) {
+		if(newpos+ctrl[1] > header.newsize) 
+		{
 			sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 			return -1;
 		}		
 
 		/* Read extra string */
 		lenread = BZ2_bzRead(&ebz2err, epfbz2, new + newpos, ctrl[1]);
-		if ((lenread < ctrl[1]) ||
-		    ((ebz2err != BZ_OK) && (ebz2err != BZ_STREAM_END))) {
+		if ((lenread < ctrl[1]) || ((ebz2err != BZ_OK) && (ebz2err != BZ_STREAM_END))) 
+		{
 			sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
 			return -1;
 		}		
@@ -220,14 +241,15 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	BZ2_bzReadClose(&cbz2err, cpfbz2);
 	BZ2_bzReadClose(&dbz2err, dpfbz2);
 	BZ2_bzReadClose(&ebz2err, epfbz2);
-	if (fclose(cpf) || fclose(dpf) || fclose(epf)) {
+	if (fclose(cpf) || fclose(dpf) || fclose(epf)) 
+	{
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
 		return -1;
 	}
 
 	/* Write the new file */
-	if(((fd=open(newfile,OPEN_FLAGS_CREATE,0666))<0) ||
-		(write(fd,new,header.newsize)!=header.newsize) || (close(fd)==-1)) {
+	if(((fd=open(newfile,OPEN_FLAGS_CREATE,0666))<0) || (write(fd,new,header.newsize)!=header.newsize) || (close(fd)==-1)) 
+	{
 		sprintf((char*)error, "\"%s\" %s", newfile, strerror(errno));
 		return -1;
 	}	
