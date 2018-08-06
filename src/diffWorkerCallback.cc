@@ -1,8 +1,8 @@
 
-#include "diffWorkerCallback.h"
+#include "DiffWorkerCallback.h"
 
 extern "C" {
-  #include "bsdiff/bsdiff.h"
+  #include "c/bsdiff/bsdiff.h"
 }
 
 // Public

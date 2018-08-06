@@ -1,8 +1,8 @@
 
-#include "patchWorkerCallback.h"
+#include "PatchWorkerCallback.h"
 
 extern "C" {
-  #include "bspatch/bspatch.h"
+  #include "c/bspatch/bspatch.h"
 }
 
 // Public

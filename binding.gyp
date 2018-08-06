@@ -3,18 +3,18 @@
     {
       "target_name": "bsdiff",
       "sources": [
-        "src/main.cc",
-        "src/diffWorkerCallback.cc",
-        "src/patchWorkerCallback.cc",
-        "src/bsdiff/bsdiff.c",
-        "src/bspatch/bspatch.c",
-        "src/bzip2/bzlib.c",
-        "src/bzip2/compress.c",
-        "src/bzip2/crctable.c",
-        "src/bzip2/randtable.c",
-        "src/bzip2/blocksort.c",
-        "src/bzip2/huffman.c",
-        "src/bzip2/decompress.c"
+        "src/Main.cc",
+        "src/DiffWorkerCallback.cc",
+        "src/PatchWorkerCallback.cc",
+        "src/c/bsdiff/bsdiff.c",
+        "src/c/bspatch/bspatch.c",
+        "src/c/bzip2/bzlib.c",
+        "src/c/bzip2/compress.c",
+        "src/c/bzip2/crctable.c",
+        "src/c/bzip2/randtable.c",
+        "src/c/bzip2/blocksort.c",
+        "src/c/bzip2/huffman.c",
+        "src/c/bzip2/decompress.c"
       ],      
       "include_dirs": [
         "include", "./src/bzip2",
