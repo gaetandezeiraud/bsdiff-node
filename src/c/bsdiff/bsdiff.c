@@ -338,7 +338,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 
 	while(scan<newsize) 
 	{
-		if (callback)
+		if(callback)
 			callback(scan, newsize, progressWorker);
 		oldscore=0;
 

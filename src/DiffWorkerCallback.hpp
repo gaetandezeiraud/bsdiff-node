@@ -1,5 +1,5 @@
-#ifndef diffWorkerCallback_H
-#define diffWorkerCallback_H
+#ifndef DiffWorkerCallback_H
+#define DiffWorkerCallback_H
 
 #include <nan.h>
 #include <sys/types.h>
@@ -31,4 +31,4 @@ private:
     std::string _error;
 };
 
-#endif  // diffWorkerCallback_H
+#endif  // DiffWorkerCallback_H

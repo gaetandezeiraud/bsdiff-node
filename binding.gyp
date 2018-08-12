@@ -3,9 +3,9 @@
     {
       "target_name": "bsdiff",
       "sources": [
-        "src/Main.cc",
-        "src/DiffWorkerCallback.cc",
-        "src/PatchWorkerCallback.cc",
+        "src/Main.cpp",
+        "src/DiffWorkerCallback.cpp",
+        "src/PatchWorkerCallback.cpp",
         "src/c/bsdiff/bsdiff.c",
         "src/c/bspatch/bspatch.c",
         "src/c/bzip2/bzlib.c",

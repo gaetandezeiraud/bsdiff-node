@@ -1,5 +1,15 @@
+![NpmLicense](https://img.shields.io/npm/l/express.svg)
+
 # bsdiff-nodejs
-An binary diff and patch library based on bsdiff algorithm for NodeJS (Windows, Mac, Linux)
+> An binary diff and patch library based on bsdiff algorithm for NodeJS (Windows, Mac, Linux)
+
+<br>
+<hr>
+<p align="center">
+If you find this package useful, please don't forget to star ⭐️ the repo, as this will help to promote the project.<br>
+</p>
+<hr>
+
 
 ## INSTALLATION
 
@@ -15,6 +25,9 @@ npm install --save bsdiff-nodejs
 const bsdiff = require('bsdiff-nodejs');
 bsdiff.diff(oldFile, newFile, patchFile, function(result, err) {}); // Async
 bsdiff.patch(oldfile, newfile, patchfile, function(result, err) {}); // Async
+
+bsdiff.diffSync(oldFile, newFile, patchFile); // Sync
+bsdiff.patchSync(oldfile, newfile, patchfile); // Sync
 ```
 
 For example:
@@ -43,4 +56,9 @@ bsdiff.diff(oldFile, newFile, patchFile, function(result, err) {
 ```
 
 ## License
-Copyright 2003-2005 Colin Percival
+The original algorithm and implementation was developed by Colin Percival.  The
+algorithm is detailed in his paper, [Naïve Differences of Executable Code](http://www.daemonology.net/papers/bsdiff.pdf).  For more information, visit his
+website at <http://www.daemonology.net/bsdiff/>.  
+
+Copyright 2003-2005 Colin Percival  
+MIT © Dezeiraud

@@ -179,7 +179,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	oldpos=0;newpos=0;
 	while(newpos<header.newsize) 
 	{
-		if (callback)
+		if(callback)
 			callback(newpos, header.newsize, progressWorker);
 		/* Read control data */
 		for(i=0;i<=2;i++) 

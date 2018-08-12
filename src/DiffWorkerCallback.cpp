@@ -1,5 +1,5 @@
 
-#include "DiffWorkerCallback.h"
+#include "DiffWorkerCallback.hpp"
 
 extern "C" {
   #include "c/bsdiff/bsdiff.h"

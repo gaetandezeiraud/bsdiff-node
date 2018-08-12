@@ -1,5 +1,5 @@
-#ifndef patchWorkerCallback_H
-#define patchWorkerCallback_H
+#ifndef PatchWorkerCallback_H
+#define PatchWorkerCallback_H
 
 #include <nan.h>
 #include <sys/types.h>
@@ -31,4 +31,4 @@ private:
     std::string _error;
 };
 
-#endif  // patchWorkerCallback_H
+#endif  // PatchWorkerCallback_H

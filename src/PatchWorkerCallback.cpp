@@ -1,5 +1,5 @@
 
-#include "PatchWorkerCallback.h"
+#include "PatchWorkerCallback.hpp"
 
 extern "C" {
   #include "c/bspatch/bspatch.h"

@@ -1,14 +1,15 @@
 {
   "name": "bsdiff-nodejs",
   "description": "An binary diff and patch library based on bsdiff algorithm for NodeJS (Windows, Mac, Linux).",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "main": "index.js",
   "devDependencies": {
     "mocha": "^5.2.0"
   },
   "scripts": {
     "test": "mocha",
-    "install": "node-gyp rebuild --verbose"
+    "install": "node-gyp rebuild",
+    "install-verbose": "node-gyp rebuild --verbose"
   },
   "keywords": [
     "bsdiff",
