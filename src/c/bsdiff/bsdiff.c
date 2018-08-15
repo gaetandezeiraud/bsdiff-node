@@ -118,7 +118,7 @@ static void split(off_t *I,off_t *V,off_t start,off_t len,off_t h)
 		V[I[jj+i]] = kk-1;
 
 	if(jj == kk-1) 
-		I[jj] =- 1;
+		I[jj] = -1;
 
 	if(start+len > kk) 
 		split(I, V, kk, start+len-kk, h);
@@ -140,7 +140,7 @@ static void qsufsort(off_t *I,off_t *V,u_char *old,off_t oldsize)
 	for(i=0;i<oldsize;i++) V[i]=buckets[old[i]];
 	V[oldsize] = 0;
 	for(i=1;i<256;i++) if(buckets[i]==buckets[i-1]+1) I[buckets[i]]=-1;
-	I[0] =- 1;
+	I[0] = -1;
 
 	for(h=1;I[0]!=-(oldsize+1);h+=h) 
 	{
@@ -165,7 +165,7 @@ static void qsufsort(off_t *I,off_t *V,u_char *old,off_t oldsize)
 		}
 
 		if(len) 
-			I[i-len] =- len;
+			I[i-len] = -len;
 	}
 
 	for(i=0; i<oldsize+1; i++) 

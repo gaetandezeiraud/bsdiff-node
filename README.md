@@ -11,7 +11,7 @@ If you find this package useful, please don't forget to star ⭐️ the repo, as
 <hr>
 
 
-## INSTALLATION
+## Installation
 
 Install as a dependency for your project:
 
@@ -19,7 +19,7 @@ Install as a dependency for your project:
 npm install --save bsdiff-nodejs
 ```
 
-## USAGE
+## Usage
 
 ```javascript
 const bsdiff = require('bsdiff-nodejs');
