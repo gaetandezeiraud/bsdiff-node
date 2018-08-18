@@ -32,16 +32,16 @@ static off_t offtin(u_char *buf)
 	off_t y;
 
 	y=buf[7]&0x7F;
-	y=y<<8;y+=buf[6];
-	y=y<<8;y+=buf[5];
-	y=y<<8;y+=buf[4];
-	y=y<<8;y+=buf[3];
-	y=y<<8;y+=buf[2];
-	y=y<<8;y+=buf[1];
-	y=y<<8;y+=buf[0];
+	y=y<<8; y+=buf[6];
+	y=y<<8; y+=buf[5];
+	y=y<<8; y+=buf[4];
+	y=y<<8; y+=buf[3];
+	y=y<<8; y+=buf[2];
+	y=y<<8; y+=buf[1];
+	y=y<<8; y+=buf[0];
 
 	if(buf[7]&0x80) 
-		y=-y;
+		y = -y;
 
 	return y;
 }
@@ -100,14 +100,9 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	}		
 
 	/* Read lengths from header */
-	header.bzctrllen=offtin(&header.bzctrllen);
-	header.bzdatalen=offtin(&header.bzdatalen);
-	header.newsize=offtin(&header.newsize);
-	if((header.bzctrllen<0) || (header.bzdatalen<0) || (header.newsize<0)) 
-	{
-		sprintf((char*)error, "\"%s\"Corrupt patch", patchfile);
-		return -1;
-	}		
+	header.bzctrllen = offtin(&header.bzctrllen);
+	header.bzdatalen = offtin(&header.bzdatalen);
+	header.newsize = offtin(&header.newsize);
 
 	/* Close patch file and re-open it via libbzip2 at the right places */
 	if (fclose(f)) 
