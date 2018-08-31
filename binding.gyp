@@ -17,7 +17,7 @@
         "src/c/bzip2/decompress.c"
       ],      
       "include_dirs": [
-        "include", "./src/bzip2",
+        "include", "./src/c/bzip2",
         "<!(node -e \"require('nan')\")"
       ]      
     }
