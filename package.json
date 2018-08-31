@@ -8,6 +8,7 @@
   },
   "main": "index.js",
   "scripts": {
+    "pretest": "eslint .",
     "test": "mocha",
     "install": "node-pre-gyp install --fallback-to-build || node-gyp rebuild",
     "install-verbose": "node-gyp rebuild --verbose",
@@ -38,6 +39,12 @@
     "node-pre-gyp": "^0.11.0"
   },
   "devDependencies": {
+    "eslint": "^5.4.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.0",
+    "eslint-plugin-standard": "^4.0.0",
     "mocha": "^5.2.0",
     "node-pre-gyp-github": "^1.4.1"
   }
