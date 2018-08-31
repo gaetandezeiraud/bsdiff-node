@@ -1,4 +1,6 @@
 ![NpmLicense](https://img.shields.io/npm/l/express.svg)
+[![Build Status](https://travis-ci.org/Dezeiraud/bsdiff-nodejs.svg?branch=master)](https://travis-ci.org/Dezeiraud/bsdiff-nodejs)
+[![Build status](https://ci.appveyor.com/api/projects/status/wrl9ih6q9t7i3cgn?svg=true)](https://ci.appveyor.com/project/Brouilles/bsdiff-nodejs)
 
 # bsdiff-nodejs
 > An binary diff and patch library based on bsdiff algorithm for NodeJS (Windows, Mac, Linux)
