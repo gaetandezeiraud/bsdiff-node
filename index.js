@@ -3,8 +3,8 @@ const bsdiff = require('./build/Release/bsdiff.node');
 function promisify (fnName) {
   const fn = bsdiff[fnName];
   bsdiff[fnName] = function () {
-    let args = Array.from(arguments);
-    let callback;
+    var args = Array.from(arguments);
+    var callback;
     if (typeof args[args.length - 1] === 'function') {
       callback = args.pop();
     }
