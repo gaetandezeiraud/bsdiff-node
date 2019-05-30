@@ -1,7 +1,7 @@
 {
   "name": "bsdiff-nodejs",
   "description": "An binary diff and patch library based on bsdiff algorithm for NodeJS (Windows, Mac, Linux).",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Exoway/bsdiff-nodejs.git"
