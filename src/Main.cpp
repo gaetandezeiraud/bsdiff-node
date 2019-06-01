@@ -22,13 +22,13 @@ namespace bsdpNode {
     
     Nan::Callback *callback = new Nan::Callback(args[3].As<v8::Function>());
 
-    Nan::Utf8String param0(args[0]->ToString());
+    Nan::Utf8String param0(args[0]);
     std::string oldfile = std::string(*param0);  
 
-    Nan::Utf8String param1(args[1]->ToString());
+    Nan::Utf8String param1(args[1]);
     std::string newfile = std::string(*param1);  
 
-    Nan::Utf8String param2(args[2]->ToString());
+    Nan::Utf8String param2(args[2]);
     std::string patchfile = std::string(*param2);  
 
     DiffWorkerCallback* wc = new DiffWorkerCallback(callback, oldfile, newfile, patchfile);
@@ -72,13 +72,13 @@ namespace bsdpNode {
     
     Nan::Callback *callback = new Nan::Callback(args[3].As<v8::Function>());
 
-    Nan::Utf8String param0(args[0]->ToString());
+    Nan::Utf8String param0(args[0]);
     std::string oldfile = std::string(*param0);  
 
-    Nan::Utf8String param1(args[1]->ToString());
+    Nan::Utf8String param1(args[1]);
     std::string newfile = std::string(*param1);  
 
-    Nan::Utf8String param2(args[2]->ToString());
+    Nan::Utf8String param2(args[2]);
     std::string patchfile = std::string(*param2);  
 
     PatchWorkerCallback* wc = new PatchWorkerCallback(callback, oldfile, newfile, patchfile);
