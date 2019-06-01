@@ -22,13 +22,13 @@ namespace bsdpNode {
     
     Nan::Callback *callback = new Nan::Callback(args[3].As<v8::Function>());
 
-    v8::String::Utf8Value param0(args[0]->ToString());
+    Nan::Utf8String param0(args[0]->ToString());
     std::string oldfile = std::string(*param0);  
 
-    v8::String::Utf8Value param1(args[1]->ToString());
+    Nan::Utf8String param1(args[1]->ToString());
     std::string newfile = std::string(*param1);  
 
-    v8::String::Utf8Value param2(args[2]->ToString());
+    Nan::Utf8String param2(args[2]->ToString());
     std::string patchfile = std::string(*param2);  
 
     DiffWorkerCallback* wc = new DiffWorkerCallback(callback, oldfile, newfile, patchfile);
@@ -46,9 +46,9 @@ namespace bsdpNode {
       return;
     }
     
-    String::Utf8Value oldfile(args[0]);
-    String::Utf8Value newfile(args[1]);
-    String::Utf8Value patchfile(args[2]);
+    Nan::Utf8String oldfile(args[0]);
+    Nan::Utf8String newfile(args[1]);
+    Nan::Utf8String patchfile(args[2]);
 
 
     char error[1024];
@@ -72,13 +72,13 @@ namespace bsdpNode {
     
     Nan::Callback *callback = new Nan::Callback(args[3].As<v8::Function>());
 
-    v8::String::Utf8Value param0(args[0]->ToString());
+    Nan::Utf8String param0(args[0]->ToString());
     std::string oldfile = std::string(*param0);  
 
-    v8::String::Utf8Value param1(args[1]->ToString());
+    Nan::Utf8String param1(args[1]->ToString());
     std::string newfile = std::string(*param1);  
 
-    v8::String::Utf8Value param2(args[2]->ToString());
+    Nan::Utf8String param2(args[2]->ToString());
     std::string patchfile = std::string(*param2);  
 
     PatchWorkerCallback* wc = new PatchWorkerCallback(callback, oldfile, newfile, patchfile);
@@ -96,9 +96,9 @@ namespace bsdpNode {
       return;
     }
     
-    String::Utf8Value oldfile(args[0]);
-    String::Utf8Value newfile(args[1]);
-    String::Utf8Value patchfile(args[2]);
+    Nan::Utf8String oldfile(args[0]);
+    Nan::Utf8String newfile(args[1]);
+    Nan::Utf8String patchfile(args[2]);
 
     char error[1024];
     memset(error, 0, sizeof error);
