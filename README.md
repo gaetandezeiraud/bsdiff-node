@@ -15,7 +15,7 @@ If you find this package useful, please don't forget to star ⭐️ the repo, as
 
 ## Installation
 
-Install as a dependency for your project:
+Install as a dependency for your project (need python 2.x):
 
 ```bash
 npm install --save bsdiff-nodejs
