@@ -1,7 +1,7 @@
 /*
 **	MIT License
 **
-**	Copyright (c) 2018 Dezeiraud
+**	Copyright (c) 2018-2019 Exoway
 **
 **	Permission is hereby granted, free of charge, to any person obtaining a copy
 **	of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
 **	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 **	SOFTWARE.
 **
-**	last modified by pribault at 07/10/2018
 */
 
 #ifndef SHARED_H

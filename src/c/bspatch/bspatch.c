@@ -46,6 +46,44 @@ static off_t offtin(u_char *buf)
 	return y;
 }
 
+static off_t readFileToBuffer(int fd, uint8_t* buffer, off_t bufferSize)
+{
+    off_t bytesRead = 0;
+    int ret;
+    while (bytesRead < bufferSize)
+    {
+        ret = read(fd, buffer + bytesRead, bufferSize - bytesRead);
+        if (ret > 0)
+        {
+            bytesRead += ret;
+        }
+        else
+        {
+            break;
+        }
+    }
+    return bytesRead;
+}
+
+static off_t writeFileFromBuffer(int fd, uint8_t* buffer, off_t bufferSize)
+{
+    off_t bytesWritten = 0;
+    int ret;
+    while (bytesWritten < bufferSize)
+    {
+        ret = write(fd, buffer + bytesWritten, bufferSize - bytesWritten);
+        if (ret > 0)
+        {
+            bytesWritten += ret;
+        }
+        else
+        {
+            break;
+        }
+    }
+    return bytesWritten;
+}
+
 int bspatch(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void* progressWorker, void(*callback)(off_t, off_t, void*)) 
 {
 	FILE * f, * cpf, * dpf, * epf;
@@ -160,7 +198,7 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 		((oldsize=lseek(fd,0,SEEK_END))==-1) ||
 		((old=malloc(oldsize+1))==NULL) ||
 		(lseek(fd,0,SEEK_SET)!=0) ||
-		(read(fd,old,oldsize)!=oldsize) ||
+		(readFileToBuffer(fd,old,oldsize)!=oldsize) ||
 		(close(fd)==-1)) {
 		sprintf((char*)error, "\"%s\" %s", oldfile, strerror(errno));
 		return -1;
@@ -243,7 +281,8 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	}
 
 	/* Write the new file */
-	if(((fd=open(newfile,OPEN_FLAGS_CREATE,0666))<0) || (write(fd,new,header.newsize)!=header.newsize) || (close(fd)==-1)) 
+	if(((fd=open(newfile,OPEN_FLAGS_CREATE,0666))<0) || 
+		(writeFileFromBuffer(fd,new,header.newsize)!=header.newsize) || (close(fd)==-1)) 
 	{
 		sprintf((char*)error, "\"%s\" %s", newfile, strerror(errno));
 		return -1;
