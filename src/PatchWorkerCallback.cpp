@@ -34,14 +34,14 @@ PatchWorkerCallback::PatchWorkerCallback(Nan::Callback *callback, const std::str
     : AsyncProgressWorkerBase(callback)
 {
   _oldfile = oldfile;
-  _newfile = newfile; 
+  _newfile = newfile;
   _patchfile = patchfile;
 }
 
-PatchWorkerCallback::~PatchWorkerCallback() 
+PatchWorkerCallback::~PatchWorkerCallback()
 {   }
 
-void PatchWorkerCallback::Execute(const ExecutionProgress& progress) 
+void PatchWorkerCallback::Execute(const ExecutionProgress& progress)
 {
     char error[1024];
     memset(error, 0, sizeof error);
@@ -51,28 +51,28 @@ void PatchWorkerCallback::Execute(const ExecutionProgress& progress)
     data.progressWorker = &progress;
 
     bspatch(error, _oldfile.c_str(), _newfile.c_str(), _patchfile.c_str(), &data, &PatchWorkerCallback::CCallback);
-    _error = error; 
+    _error = error;
 }
 
-void PatchWorkerCallback::HandleProgressCallback(const int* data, size_t count) 
+void PatchWorkerCallback::HandleProgressCallback(const int* data, size_t count)
 {
     if(data != nullptr)
     {
         Nan::HandleScope scope;
         v8::Local<v8::Value> argv[] = {
             v8::Number::New(v8::Isolate::GetCurrent(), *data),
-            v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), _error.c_str())
+            Nan::New<v8::String>(_error.c_str()).ToLocalChecked()
         };
 
         callback->Call(2, argv, this->async_resource);
     }
 }
 
-void PatchWorkerCallback::HandleOKCallback() 
+void PatchWorkerCallback::HandleOKCallback()
 {
-    v8::Local<v8::Value> argv[] = { 
+    v8::Local<v8::Value> argv[] = {
         v8::Number::New(v8::Isolate::GetCurrent(), 100),
-        v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), _error.c_str()) 
+        Nan::New<v8::String>(_error.c_str()).ToLocalChecked()
     };
     callback->Call(2, argv, this->async_resource);
 }

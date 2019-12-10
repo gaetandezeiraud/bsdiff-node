@@ -34,14 +34,14 @@ DiffWorkerCallback::DiffWorkerCallback(Nan::Callback *callback, const std::strin
     : AsyncProgressWorkerBase(callback)
 {
   _oldfile = oldfile;
-  _newfile = newfile; 
+  _newfile = newfile;
   _patchfile = patchfile;
 }
 
-DiffWorkerCallback::~DiffWorkerCallback() 
+DiffWorkerCallback::~DiffWorkerCallback()
 {   }
 
-void DiffWorkerCallback::Execute(const ExecutionProgress& progress) 
+void DiffWorkerCallback::Execute(const ExecutionProgress& progress)
 {
     char error[1024];
     memset(error, 0, sizeof error);
@@ -51,28 +51,28 @@ void DiffWorkerCallback::Execute(const ExecutionProgress& progress)
     data.progressWorker = &progress;
 
     bsdiff(error, _oldfile.c_str(), _newfile.c_str(), _patchfile.c_str(), &data, &DiffWorkerCallback::CCallback);
-    _error = error; 
+    _error = error;
 }
 
-void DiffWorkerCallback::HandleProgressCallback(const int* data, size_t count) 
+void DiffWorkerCallback::HandleProgressCallback(const int* data, size_t count)
 {
     if(data != nullptr)
     {
         Nan::HandleScope scope;
         v8::Local<v8::Value> argv[] = {
             v8::Number::New(v8::Isolate::GetCurrent(), *data),
-            v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), _error.c_str())
+            Nan::New<v8::String>(_error.c_str()).ToLocalChecked()
         };
 
         callback->Call(2, argv, this->async_resource);
     }
 }
 
-void DiffWorkerCallback::HandleOKCallback() 
+void DiffWorkerCallback::HandleOKCallback()
 {
-    v8::Local<v8::Value> argv[] = { 
+    v8::Local<v8::Value> argv[] = {
         v8::Number::New(v8::Isolate::GetCurrent(), 100),
-        v8::String::NewFromUtf8(v8::Isolate::GetCurrent(), _error.c_str()) 
+        Nan::New<v8::String>(_error.c_str()).ToLocalChecked()
     };
     callback->Call(2, argv, this->async_resource);
 }
