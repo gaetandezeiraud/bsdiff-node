@@ -1,7 +1,7 @@
 {
   "name": "bsdiff-nodejs",
   "description": "An binary diff and patch library based on bsdiff algorithm for NodeJS (Windows, Mac, Linux).",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Exoway/bsdiff-nodejs.git"
@@ -34,11 +34,11 @@
   "license": "MIT",
   "gypfile": true,
   "dependencies": {
-    "nan": "^2.14.0",
-    "node-pre-gyp": "^0.14.0"
+    "nan": "^2.14.1",
+    "node-pre-gyp": "^0.15.0"
   },
   "devDependencies": {
-    "mocha": "^6.2.2",
+    "mocha": "^8.1.1",
     "node-pre-gyp-github": "^1.4.3"
   }
 }
