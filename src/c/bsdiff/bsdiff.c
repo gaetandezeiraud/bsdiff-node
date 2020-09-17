@@ -233,25 +233,6 @@ static void offtout(off_t x,u_char *buf)
 		buf[7]|= 0x80;
 }
 
-static off_t readFileToBuffer(int fd, uint8_t* buffer, off_t bufferSize)
-{
-    off_t bytesRead = 0;
-    int ret;
-    while (bytesRead < bufferSize)
-    {
-        ret = read(fd, buffer + bytesRead, bufferSize - bytesRead);
-        if (ret > 0)
-        {
-            bytesRead += ret;
-        }
-        else
-        {
-            break;
-        }
-    }
-    return bytesRead;
-}
-
 int bsdiff(const char* error, const char* oldfile, const char* newfile, const char* patchfile, void* progressWorker, void(*callback)(off_t, off_t, void*)) 
 {
 	int fd;
@@ -278,7 +259,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		((oldsize=lseek(fd,0,SEEK_END))==-1) ||
 		((old=malloc(oldsize+1))==NULL) ||
 		(lseek(fd,0,SEEK_SET)!=0) ||
-		(readFileToBuffer(fd,old,oldsize)!=oldsize) ||
+		(read(fd,old,oldsize)!=oldsize) ||
 		(close(fd)==-1)) 
 	{
 			sprintf((char*)error, "\"%s\" %s", oldfile, strerror(errno));
@@ -302,7 +283,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		((newsize=lseek(fd,0,SEEK_END))==-1) ||
 		((new=malloc(newsize+1))==NULL) ||
 		(lseek(fd,0,SEEK_SET)!=0) ||
-		(readFileToBuffer(fd,new,newsize)!=newsize) ||
+		(read(fd,new,newsize)!=newsize) ||
 		(close(fd)==-1)) 
 	{
 			sprintf((char*)error, "\"%s\" %s", newfile, strerror(errno));

@@ -1,5 +1,7 @@
 'use strict';
+
 const bsdiff = require('./build/Release/bsdiff.node');
+
 function promisify (fnName) {
   const fn = bsdiff[fnName];
   bsdiff[fnName] = function () {

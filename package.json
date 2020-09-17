@@ -1,7 +1,7 @@
 {
   "name": "bsdiff-nodejs",
   "description": "An binary diff and patch library based on bsdiff algorithm for NodeJS (Windows, Mac, Linux).",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Exoway/bsdiff-nodejs.git"
@@ -9,10 +9,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "install": "node-pre-gyp install --fallback-to-build || node-gyp rebuild",
-    "install-verbose": "node-gyp rebuild --verbose",
-    "predeploy": "node-pre-gyp rebuild && node-pre-gyp package",
-    "deploy": "node-pre-gyp-github publish --release || exit 0"
+    "install": "node-gyp rebuild",
+    "install-verbose": "node-gyp rebuild --verbose"
   },
   "binary": {
     "module_name": "bsdiff",
@@ -27,18 +25,16 @@
     "binary patch"
   ],
   "bugs": {
-    "url": "https://github.com/Exoway/bsdiff-nodejs/issues"
+    "url": "https://github.com/Brouilles/bsdiff-nodejs/issues"
   },
-  "homepage": "https://github.com/Exoway/bsdiff-nodejs#readme",
+  "homepage": "https://github.com/Brouilles/bsdiff-nodejs",
   "author": "Exoway <contact@exoway.net>",
   "license": "MIT",
   "gypfile": true,
   "dependencies": {
-    "nan": "^2.14.1",
-    "node-pre-gyp": "^0.15.0"
+    "nan": "^2.14.1"
   },
   "devDependencies": {
-    "mocha": "^8.1.1",
-    "node-pre-gyp-github": "^1.4.3"
+    "mocha": "^8.1.3"
   }
 }
