@@ -16,7 +16,7 @@ If you find this package useful, please don't forget to star ⭐️ the repo, as
 Install as a dependency for your project (need python 3.x):
 
 ```bash
-npm install --save bsdiff-nodejs
+npm install @brouilles/bsdiff-nodejs
 ```
 
 ## Usage
