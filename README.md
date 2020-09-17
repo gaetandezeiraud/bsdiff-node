@@ -60,4 +60,4 @@ algorithm is detailed in his paper, [Naïve Differences of Executable Code](http
 website at <http://www.daemonology.net/bsdiff/>.  
 
 Copyright 2003-2005 Colin Percival  
-MIT © Exoway
+MIT © Dezeiraud
