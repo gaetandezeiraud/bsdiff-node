@@ -22,7 +22,7 @@ npm install @brouilles/bsdiff-nodejs
 ## Usage
 
 ```javascript
-const bsdiff = require('bsdiff-nodejs');
+const bsdiff = require('@brouilles/bsdiff-nodejs');
 bsdiff.diff(oldFile, newFile, patchFile, function(result, err) {}); // Async
 bsdiff.patch(oldfile, newfile, patchfile, function(result, err) {}); // Async
 
