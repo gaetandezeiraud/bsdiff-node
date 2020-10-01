@@ -13,11 +13,13 @@ If you find this package useful, please don't forget to star ⭐️ the repo, as
 
 ## Installation
 
-Install as a dependency for your project (need python 3.x):
+Install as a dependency for your project (need python 3.x) with Github Packages:
 
 ```bash
 npm install @brouilles/bsdiff-nodejs
 ```
+
+See more here https://github.com/Brouilles/bsdiff-nodejs/packages/402771/versions
 
 ## Usage
 
