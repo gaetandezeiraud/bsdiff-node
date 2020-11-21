@@ -1,6 +1,6 @@
 ![NpmLicense](https://img.shields.io/npm/l/express.svg)
 
-# bsdiff-nodejs
+# bsdiff-node
 > An binary diff and patch library based on bsdiff algorithm for NodeJS (Windows, Mac, Linux)
 
 <br>
@@ -13,18 +13,16 @@ If you find this package useful, please don't forget to star ⭐️ the repo, as
 
 ## Installation
 
-Install as a dependency for your project (need python 3.x) with Github Packages:
+Install as a dependency for your project (need python 3.x):
 
 ```bash
-npm install @brouilles/bsdiff-nodejs
+npm i bsdiff-node
 ```
-
-See more here https://github.com/Brouilles/bsdiff-nodejs/packages/402771/versions
 
 ## Usage
 
 ```javascript
-const bsdiff = require('@brouilles/bsdiff-nodejs');
+const bsdiff = require('bsdiff-node');
 bsdiff.diff(oldFile, newFile, patchFile, function(result, err) {}); // Async
 bsdiff.patch(oldfile, newfile, patchfile, function(result, err) {}); // Async
 
