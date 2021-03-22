@@ -55,12 +55,13 @@
 	#define FOPEN_WRITE_FLAGS "w"
 #endif
 
+typedef long long unsigned int size_header;
 typedef struct	s_header
 {
 	char		magic[8];
-	size_t		bzctrllen;
-	size_t		bzdatalen;
-	size_t		newsize;
+	size_header		bzctrllen;
+	size_header		bzdatalen;
+	size_header		newsize;
 }				t_header;
 
 #endif
