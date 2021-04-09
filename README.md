@@ -1,3 +1,4 @@
+[![CI](https://github.com/Brouilles/bsdiff-node/actions/workflows/main.yml/badge.svg)](https://github.com/Brouilles/bsdiff-node/actions/workflows/main.yml)
 ![NpmLicense](https://img.shields.io/npm/l/express.svg)
 
 # bsdiff-node
