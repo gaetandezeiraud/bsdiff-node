@@ -314,9 +314,9 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		??	??	Bzip2ed diff block
 		??	??	Bzip2ed extra block */
 	memcpy(header.magic,"BSDIFF40",8);
-	offtout(0, &header.bzctrllen);
-	offtout(0, &header.bzdatalen);
-	offtout(newsize, &header.newsize);
+	offtout(0, (u_char*)&header.bzctrllen);
+	offtout(0, (u_char*)&header.bzdatalen);
+	offtout(newsize, (u_char*)&header.newsize);
 	if(fwrite(&header, 32, 1, pf) != 1) 
 	{
 		sprintf((char*)error, "\"%s\" %s", patchfile, strerror(errno));
@@ -448,7 +448,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		sprintf((char*)error, "\"ftell\" %s", strerror(errno));
 		return -1;
 	}		
-	offtout(len-32, &header.bzctrllen);
+	offtout(len-32, (u_char*)&header.bzctrllen);
 
 	/* Write compressed diff data */
 	if ((pfbz2 = BZ2_bzWriteOpen(&bz2err, pf, 9, 0, 0)) == NULL) 
@@ -477,7 +477,7 @@ int bsdiff(const char* error, const char* oldfile, const char* newfile, const ch
 		sprintf((char*)error, "\"ftell\" %s", strerror(errno));
 		return -1;
 	}	
-	offtout(newsize - len, &header.bzdatalen);
+	offtout(newsize - len, (u_char*)&header.bzdatalen);
 
 	/* Write compressed extra data */
 	if ((pfbz2 = BZ2_bzWriteOpen(&bz2err, pf, 9, 0, 0)) == NULL) 

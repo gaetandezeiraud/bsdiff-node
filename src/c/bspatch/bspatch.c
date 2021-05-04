@@ -100,9 +100,9 @@ int bspatch(const char* error, const char* oldfile, const char* newfile, const c
 	}		
 
 	/* Read lengths from header */
-	header.bzctrllen = offtin(&header.bzctrllen);
-	header.bzdatalen = offtin(&header.bzdatalen);
-	header.newsize = offtin(&header.newsize);
+	header.bzctrllen = offtin((u_char*)&header.bzctrllen);
+	header.bzdatalen = offtin((u_char*)&header.bzdatalen);
+	header.newsize = offtin((u_char*)&header.newsize);
 
 	/* Close patch file and re-open it via libbzip2 at the right places */
 	if (fclose(f)) 
