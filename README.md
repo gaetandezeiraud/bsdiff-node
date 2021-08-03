@@ -34,7 +34,6 @@ bsdiff.patchSync(oldfile, newfile, patchfile); // Sync
 For example:
 
 ```javascript
-const fs = require('fs');
 const path = require('path');
 
 const oldFile = path.join(__dirname, 'resources/react-0.3-stable.zip');
