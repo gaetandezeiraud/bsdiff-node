@@ -105,7 +105,7 @@ namespace bsdpNode {
       Nan::ThrowError(error);
   }
 
-  void init(Local<Object> exports, Local<Object> module) {
+  void init(Local<Object> exports) {
     NODE_SET_METHOD(exports, "diff", diff);
     NODE_SET_METHOD(exports, "diffSync", diffSync);
 
@@ -113,5 +113,7 @@ namespace bsdpNode {
     NODE_SET_METHOD(exports, "patchSync", patchSync);
   }
 
-  NODE_MODULE(bsdp, init)
+  NODE_MODULE_INIT() {
+    init(exports);
+  }
 }
