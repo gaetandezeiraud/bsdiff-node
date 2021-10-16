@@ -28,7 +28,7 @@
     "url": "https://github.com/Brouilles/bsdiff-node/issues"
   },
   "homepage": "https://github.com/Brouilles/bsdiff-node",
-  "author": "Brouilles <contact@exoway.net>",
+  "author": "Gaëtan Dezeiraud <hello@dezeiraud.com>",
   "license": "MIT",
   "gypfile": true,
   "dependencies": {
