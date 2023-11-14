@@ -6,6 +6,7 @@
         "src/Main.cpp",
         "src/DiffWorkerCallback.cpp",
         "src/PatchWorkerCallback.cpp",
+        "src/Util.cpp",
         "src/c/bsdiff/bsdiff.c",
         "src/c/bspatch/bspatch.c",
         "src/c/bzip2/bzlib.c",

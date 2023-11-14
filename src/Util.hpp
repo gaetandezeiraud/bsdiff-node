@@ -1,12 +1,12 @@
-#ifndef Uitl_H
-#define Uitl_H
+#ifndef Util_H
+#define Util_H
 
 #include <string>
 
 namespace bsdpNode {
-#ifdef WIN32
+#ifdef _WIN32
     std::string Utf8ToAnsi(const std::string& utf8str);
 #endif
 }
 
-#endif  // Uitl_H
+#endif  // Util_H

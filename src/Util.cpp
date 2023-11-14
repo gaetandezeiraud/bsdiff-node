@@ -1,9 +1,11 @@
 #include "Util.hpp"
 
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 
 namespace bsdpNode {
-#ifdef WIN32
+#ifdef _WIN32
   std::string Utf8ToAnsi(const std::string& utf8str)
   {
     int wcsLen = ::MultiByteToWideChar(CP_UTF8, NULL, utf8str.c_str(), strlen(utf8str.c_str()), NULL, 0);
