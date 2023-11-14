@@ -1,6 +1,7 @@
 #include <node.h>
 #include "DiffWorkerCallback.hpp"
 #include "PatchWorkerCallback.hpp"
+#include "Util.hpp"
 
 extern "C" {
   #include "c/bsdiff/bsdiff.h"
@@ -21,13 +22,25 @@ namespace bsdpNode {
     Nan::Callback *callback = new Nan::Callback(args[3].As<v8::Function>());
 
     Nan::Utf8String param0(args[0]);
+#ifdef WIN32
+    std::string oldfile = Utf8ToAnsi(*param0);
+#else
     std::string oldfile = std::string(*param0);
+#endif
 
     Nan::Utf8String param1(args[1]);
+#ifdef WIN32
+    std::string newfile = Utf8ToAnsi(*param1);
+#else
     std::string newfile = std::string(*param1);
+#endif
 
     Nan::Utf8String param2(args[2]);
-    std::string patchfile = std::string(*param2);
+#ifdef WIN32
+    std::string patchfile = Utf8ToAnsi(*param2);
+#else
+std::string patchfile = std::string(*param2);
+#endif
 
     DiffWorkerCallback* wc = new DiffWorkerCallback(callback, oldfile, newfile, patchfile);
     Nan::AsyncQueueWorker(wc);
@@ -52,7 +65,11 @@ namespace bsdpNode {
     char error[1024];
     memset(error, 0, sizeof error);
 
+#ifdef WIN32
+    int ret = bsdiff(error, Utf8ToAnsi(*oldfile).c_str(), Utf8ToAnsi(*newfile).c_str(), Utf8ToAnsi(*patchfile).c_str(), nullptr, nullptr);
+#else
     int ret = bsdiff(error, *oldfile, *newfile, *patchfile, nullptr, nullptr);
+#endif
 
     if(ret != 0)
       Nan::ThrowError(error);
@@ -69,13 +86,25 @@ namespace bsdpNode {
     Nan::Callback *callback = new Nan::Callback(args[3].As<v8::Function>());
 
     Nan::Utf8String param0(args[0]);
+#ifdef WIN32
+    std::string oldfile = Utf8ToAnsi(*param0);
+#else
     std::string oldfile = std::string(*param0);
+#endif
 
     Nan::Utf8String param1(args[1]);
+#ifdef WIN32
+    std::string newfile = Utf8ToAnsi(*param1);
+#else
     std::string newfile = std::string(*param1);
+#endif
 
     Nan::Utf8String param2(args[2]);
-    std::string patchfile = std::string(*param2);
+#ifdef WIN32
+    std::string patchfile = Utf8ToAnsi(*param2);
+#else
+std::string patchfile = std::string(*param2);
+#endif
 
     PatchWorkerCallback* wc = new PatchWorkerCallback(callback, oldfile, newfile, patchfile);
     Nan::AsyncQueueWorker(wc);
@@ -99,7 +128,11 @@ namespace bsdpNode {
     char error[1024];
     memset(error, 0, sizeof error);
 
+#ifdef WIN32
+    int ret = bspatch(error, Utf8ToAnsi(*oldfile).c_str(), Utf8ToAnsi(*newfile).c_str(), Utf8ToAnsi(*patchfile).c_str(), nullptr, nullptr);
+#else
     int ret = bspatch(error, *oldfile, *newfile, *patchfile, nullptr, nullptr);
+#endif
 
     if(ret != 0)
       Nan::ThrowError(error);
